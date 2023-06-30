@@ -1,10 +1,12 @@
 import sqlite3
+import prettytable
 from random import choice, randint
 from faker import Faker
 from url import from_example_to_email
 
 
 class SQLite:
+
     def __init__(self, db_name, f: str = None):
         self.connect = sqlite3.connect(db_name)
         self.cursor = self.connect.cursor()
@@ -31,8 +33,16 @@ class SQLite:
 
         self.connect.commit()
 
+    def read_office(self):
+        self.cursor.execute('SELECT * FROM Office')
+        return prettytable.from_db_cursor(self.cursor)
+
+    def read_company(self):
+        self.cursor.execute('SELECT * FROM Company')
+        return prettytable.from_db_cursor(self.cursor)
+
     def add_company(self):
-        self.cursor.execute("INSERT INTO Company (name) VALUES (?)", (self.fake.name(),))
+        self.cursor.execute("INSERT INTO Company (name) VALUES (?)", (self.fake.company(),))
         company_id = self.cursor.lastrowid
         n = choice([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, randint(5, 15)])
         for _ in range(n):
